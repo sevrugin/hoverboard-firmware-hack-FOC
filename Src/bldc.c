@@ -103,19 +103,21 @@ void DMA1_Channel1_IRQHandler(void) {
   }
 
   if (buzzerTimer % 1000 == 0) {  // Filter battery voltage at a slower sampling rate
+    if (BAT_CELLS == 0) {
+        batVoltageFixdt = (int32_t)(adc_buffer.batt1 * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC);
+        batVoltage = (int16_t)(batVoltageFixdt >> 16);  // convert fixed-point to integer
+//      batVoltage = (uint16_t)(adc_buffer.batt1 * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC);
+//      batVoltageFixdt = (int32_t)batVoltage << 16;
+
+        for (uint8_t i = 1; i <= 10; i++) {
+            if (batVoltage < (430 * i)) { // previous condition was true for i-1 cells
+                BAT_CELLS = i - 1;
+            }
+        }
+    }
     filtLowPass32(adc_buffer.batt1, BAT_FILT_COEF, &batVoltageFixdt);
     batVoltage = (int16_t)(batVoltageFixdt >> 16);  // convert fixed-point to integer
-    if (BAT_CELLS == 0) {
-      batVoltage = (uint16_t)(adc_buffer.batt1 * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC);
-      batVoltageFixdt = (int32_t)batVoltage << 16;
 
-      for (uint8_t i = 1; i <= 10; i++) {
-          if (batVoltage < (430 * i)) { // previous condition was true for i-1 cells
-              BAT_CELLS = i - 1;
-          }
-      }
-
-    }
   }
 
   // Get Left motor currents
