@@ -109,8 +109,10 @@ void DMA1_Channel1_IRQHandler(void) {
 
         for (uint8_t i = 1; i <= 10; i++) {
             if ((batVoltage * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC) < (430 * i)) { // previous condition was true for i-1 cells
-                BAT_CELLS = i - 1;
+                BAT_CELLS = i;
+                continue;
             }
+            break;
         }
     }
     filtLowPass32(adc_buffer.batt1, BAT_FILT_COEF, &batVoltageFixdt);
