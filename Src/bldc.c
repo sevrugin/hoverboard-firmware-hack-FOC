@@ -107,6 +107,8 @@ void DMA1_Channel1_IRQHandler(void) {
     batVoltage = (int16_t)(batVoltageFixdt >> 16);  // convert fixed-point to integer
     if (BAT_CELLS == 0) {
       BAT_CELLS = (uint8_t)(batVoltage / 370);
+      battVoltage = (uint16_t)adc_buffer.batt1;
+      batVoltageFixdt = (int32_t)adc_buffer.batt1 << 16;
     }
   }
 
