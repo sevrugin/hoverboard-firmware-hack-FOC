@@ -554,6 +554,11 @@ int main(void) {
         printf("Powering off, battery voltage is too low\r\n");
       #endif
       poweroff();
+    } else if ( BAT_CELLS < 6){
+      #if defined(DEBUG_SERIAL_USART2) || defined(DEBUG_SERIAL_USART3)
+        printf("Powering off, battery cell count is too low. Minimum 6, %i found\r\n", BAT_CELLS);
+      #endif
+      poweroff();
     } else if (rtY_Left.z_errCode || rtY_Right.z_errCode) {                                           // 1 beep (low pitch): Motor error, disable motors
       enable = 0;
       beepCount(1, 24, 1);

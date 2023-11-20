@@ -108,7 +108,7 @@ void DMA1_Channel1_IRQHandler(void) {
       batVoltageFixdt = (int32_t)batVoltage << 16;
 
         for (BAT_CELLS = 1; BAT_CELLS <= 10; BAT_CELLS++) {
-            if ((batVoltage * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC) < (430 * i)) { // previous condition was true for i-1 cells
+            if ((batVoltage * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC) < (430 * BAT_CELLS)) { // previous condition was true for i-1 cells
                 break;
             }
         }
