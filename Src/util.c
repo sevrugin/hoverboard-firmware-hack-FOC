@@ -45,6 +45,7 @@ extern I2C_HandleTypeDef hi2c2;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
 
+extern uint8_t BAT_CELLS;
 extern int16_t batVoltage;
 extern uint8_t backwardDrive;
 extern uint8_t buzzerCount;             // global variable for the buzzer counts. can be 1, 2, 3, 4, 5, 6, 7...
@@ -1359,21 +1360,21 @@ void sideboardLeds(uint8_t *leds) {
 
     // Battery Level Indicator: use LED1, LED2, LED3
     if (main_loop_counter % BAT_BLINK_INTERVAL == 0) {              //  | RED (LED1) | YELLOW (LED3) | GREEN (LED2) |
-      if (batVoltage < BAT_DEAD) {                                  //  |     0      |       0       |      0       |
+      if (batVoltage < BAT_DEAD * BAT_CELLS) {                                  //  |     0      |       0       |      0       |
         *leds &= ~LED1_SET & ~LED3_SET & ~LED2_SET;
-      } else if (batVoltage < BAT_LVL1) {                           //  |     B      |       0       |      0       |
+      } else if (batVoltage < BAT_LVL1 * BAT_CELLS) {                           //  |     B      |       0       |      0       |
         *leds ^= LED1_SET;
         *leds &= ~LED3_SET & ~LED2_SET;
-      } else if (batVoltage < BAT_LVL2) {                           //  |     1      |       0       |      0       |
+      } else if (batVoltage < BAT_LVL2 * BAT_CELLS) {                           //  |     1      |       0       |      0       |
         *leds |= LED1_SET;
         *leds &= ~LED3_SET & ~LED2_SET;
-      } else if (batVoltage < BAT_LVL3) {                           //  |     0      |       B       |      0       |
+      } else if (batVoltage < BAT_LVL3 * BAT_CELLS) {                           //  |     0      |       B       |      0       |
         *leds ^= LED3_SET;
         *leds &= ~LED1_SET & ~LED2_SET;
-      } else if (batVoltage < BAT_LVL4) {                           //  |     0      |       1       |      0       |
+      } else if (batVoltage < BAT_LVL4 * BAT_CELLS) {                           //  |     0      |       1       |      0       |
         *leds |= LED3_SET;
         *leds &= ~LED1_SET & ~LED2_SET;
-      } else if (batVoltage < BAT_LVL5) {                           //  |     0      |       0       |      B       |
+      } else if (batVoltage < BAT_LVL5 * BAT_CELLS) {                           //  |     0      |       0       |      B       |
         *leds ^= LED2_SET;
         *leds &= ~LED1_SET & ~LED3_SET;
       } else {                                                      //  |     0      |       0       |      1       |

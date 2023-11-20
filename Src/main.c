@@ -82,6 +82,7 @@ extern volatile int pwmr;               // global variable for pwm right. -1000 
 
 extern uint8_t enable;                  // global variable for motor enable
 
+extern uint8_t BAT_CELLS;                // global variable for number of cells in battery
 extern int16_t batVoltage;              // global variable for battery voltage
 
 #if defined(SIDEBOARD_SERIAL_USART2)
@@ -547,7 +548,7 @@ int main(void) {
         printf("Powering off, temperature is too high\r\n");
       #endif
       poweroff();
-    } else if ( BAT_DEAD_ENABLE && batVoltage < BAT_DEAD && speedAvgAbs < 20){
+    } else if ( BAT_DEAD_ENABLE && batVoltage < (BAT_DEAD * BAT_CELLS) && speedAvgAbs < 20){
       #if defined(DEBUG_SERIAL_USART2) || defined(DEBUG_SERIAL_USART3)
         printf("Powering off, battery voltage is too low\r\n");
       #endif
