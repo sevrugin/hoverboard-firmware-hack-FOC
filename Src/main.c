@@ -501,8 +501,8 @@ int main(void) {
             cmdR,                     // 4: output command: [-1000, 1000]
             adc_buffer.batt1,         // 5: for battery voltage calibration
             batVoltageCalib,          // 6: for verifying battery voltage calibration
-            board_temp_adcFilt,       // 7: for board temperature calibration
             BAT_CELLS,
+            board_temp_adcFilt,       // 7: for board temperature calibration
             board_temp_deg_c);        // 8: for verifying board temperature calibration
         #endif
       }
