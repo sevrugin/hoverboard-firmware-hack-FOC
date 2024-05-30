@@ -82,7 +82,6 @@ extern volatile int pwmr;               // global variable for pwm right. -1000 
 
 extern uint8_t enable;                  // global variable for motor enable
 
-extern uint8_t BAT_CELLS;                // global variable for number of cells in battery
 extern int16_t batVoltage;              // global variable for battery voltage
 
 #if defined(SIDEBOARD_SERIAL_USART2)
@@ -494,14 +493,13 @@ int main(void) {
         #if defined(DEBUG_SERIAL_PROTOCOL)
           process_debug();
         #else
-          printf("in1:%i in2:%i cmdL:%i cmdR:%i BatADC:%i BatV:%i CELL:%i TempADC:%i Temp:%i \r\n",
+          printf("in1:%i in2:%i cmdL:%i cmdR:%i BatADC:%i BatV:%i TempADC:%i Temp:%i \r\n",
             input1[inIdx].raw,        // 1: INPUT1
             input2[inIdx].raw,        // 2: INPUT2
             cmdL,                     // 3: output command: [-1000, 1000]
             cmdR,                     // 4: output command: [-1000, 1000]
             adc_buffer.batt1,         // 5: for battery voltage calibration
             batVoltageCalib,          // 6: for verifying battery voltage calibration
-            BAT_CELLS,
             board_temp_adcFilt,       // 7: for board temperature calibration
             board_temp_deg_c);        // 8: for verifying board temperature calibration
         #endif
@@ -549,14 +547,9 @@ int main(void) {
         printf("Powering off, temperature is too high\r\n");
       #endif
       poweroff();
-    } else if ( BAT_DEAD_ENABLE && batVoltage < (BAT_DEAD * BAT_CELLS) && speedAvgAbs < 20){
+    } else if ( BAT_DEAD_ENABLE && batVoltage < BAT_DEAD && speedAvgAbs < 20){
       #if defined(DEBUG_SERIAL_USART2) || defined(DEBUG_SERIAL_USART3)
         printf("Powering off, battery voltage is too low\r\n");
-      #endif
-      poweroff();
-    } else if ( BAT_CELLS < 6){
-      #if defined(DEBUG_SERIAL_USART2) || defined(DEBUG_SERIAL_USART3)
-        printf("Powering off, battery cell count is too low. Minimum 6, %i found\r\n", BAT_CELLS);
       #endif
       poweroff();
     } else if (rtY_Left.z_errCode || rtY_Right.z_errCode) {                                           // 1 beep (low pitch): Motor error, disable motors

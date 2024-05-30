@@ -78,9 +78,8 @@ static int16_t offsetrrC    = 2000;
 static int16_t offsetdcl    = 2000;
 static int16_t offsetdcr    = 2000;
 
-uint8_t        BAT_CELLS        = 0;
-int16_t        batVoltage       = 0;//(400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE;
-static int32_t batVoltageFixdt  = 0;//(400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 16;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
+int16_t        batVoltage       = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE;
+static int32_t batVoltageFixdt  = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 16;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
 
 // =================================
 // DMA interrupt frequency =~ 16 kHz
@@ -103,19 +102,8 @@ void DMA1_Channel1_IRQHandler(void) {
   }
 
   if (buzzerTimer % 1000 == 0) {  // Filter battery voltage at a slower sampling rate
-    if (BAT_CELLS == 0) {
-      batVoltage = (uint16_t)(adc_buffer.batt1);// * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC);
-      batVoltageFixdt = (int32_t)batVoltage << 16;
-
-        for (BAT_CELLS = 1; BAT_CELLS <= 10; BAT_CELLS++) {
-            if ((batVoltage * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC) < (430 * BAT_CELLS)) { // previous condition was true for i-1 cells
-                break;
-            }
-        }
-    }
     filtLowPass32(adc_buffer.batt1, BAT_FILT_COEF, &batVoltageFixdt);
     batVoltage = (int16_t)(batVoltageFixdt >> 16);  // convert fixed-point to integer
-
   }
 
   // Get Left motor currents
