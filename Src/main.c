@@ -590,7 +590,7 @@ int main(void) {
       }
     #endif
 
-    if (inactivity_timeout_counter > (INACTIVITY_TIMEOUT * 60 * 1000) / (DELAY_IN_MAIN_LOOP + 1)) {  // rest of main loop needs maybe 1ms
+    if (INACTIVITY_TIMEOUT > 0 && inactivity_timeout_counter > (INACTIVITY_TIMEOUT * 60 * 1000) / (DELAY_IN_MAIN_LOOP + 1)) {  // rest of main loop needs maybe 1ms
       #if defined(DEBUG_SERIAL_USART2) || defined(DEBUG_SERIAL_USART3)
         printf("Powering off, wheels were inactive for too long\r\n");
       #endif
